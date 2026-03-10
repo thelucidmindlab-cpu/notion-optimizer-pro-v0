@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Notion Performance Optimizer",
+  "version": "1.0.0-beta",
+  "description": "智能优化您的Notion数据库性能，提升加载速度和用户体验",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://api.notion.com/*"
+  ],
+  "action": {
+    "default_popup": "optimizer-ui.html",
+    "default_icon": {
+      "16": "icon16.svg",
+      "48": "icon48.svg",
+      "128": "icon128.svg"
+    }
+  },
+  "icons": {
+    "16": "icon16.svg",
+    "48": "icon48.svg",
+    "128": "icon128.svg"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion Performance Optimizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn.working {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #667eea;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .recommendations {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .recommendations h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-list li {
+            padding: 6px 0;
+            border-bottom: 1px solid #ffeaa7;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 250px;
+        }
+
+        .notification.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .notification.info {
+            background: #3498db;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 导出成功提示样式 */
+        .export-success {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 10000;
+            max-width: 350px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .export-success-content h4 {
+            color: #27ae60;
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+
+        .export-success-content p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .guide-btn, .downloads-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .guide-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .downloads-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .guide-btn:hover, .downloads-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .export-tips {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 12px;
+        }
+
+        .export-tips p {
+            margin: 0 0 6px 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .export-tips ul {
+            margin: 0;
+            padding-left: 15px;
+        }
+
+        .export-tips li {
+            margin: 4px 0;
+            font-size: 11px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Notion Performance Optimizer</h1>
+            <p>智能优化您的Notion数据库性能</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>⚙️ 配置设置</h2>
+                
+                <div class="form-group">
+                    <label for="notion-token">🔑 Notion Token</label>
+                    <input type="password" id="notion-token" placeholder="secret_...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="database-id">📊 Database ID</label>
+                    <input type="text" id="database-id" placeholder="数据库ID">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="batch-size">📦 批量大小</label>
+                        <input type="number" id="batch-size" value="100" min="1" max="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cache-ttl">⏰ 缓存时间(秒)</label>
+                        <input type="number" id="cache-ttl" value="300" min="60" max="3600">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="start-optimization" class="btn btn-primary">
+                    <span id="start-text">🚀 开始优化</span>
+                </button>
+                <button id="clear-cache" class="btn btn-secondary">🗑️ 清理缓存</button>
+                <button id="export-metrics" class="btn btn-secondary">📊 导出指标</button>
+            </div>
+            
+            <div id="progress-container" class="progress-container">
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="progress-text" class="progress-text">准备开始...</div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 性能指标</h2>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div id="cache-hit-rate" class="metric-value">0%</div>
+                        <div class="metric-label">缓存命中率</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div id="avg-response-time" class="metric-value">0ms</div>
+                        <div class="metric-label">平均响应时间</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div id="api-calls" class="metric-value">0</div>
+                        <div class="metric-label">API调用次数</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div id="memory-usage" class="metric-value">0MB</div>
+                        <div class="metric-label">内存使用</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recommendations">
+                <h3>💡 优化建议</h3>
+                <ul id="recommendations" class="recommendation-list">
+                    <li>🎯 请配置Token开始优化</li>
+                    <li>📊 <a href="https://www.notion.so/my-integrations" target="_blank">获取Notion集成Token</a></li>
+                    <li>🔑 确保Token具有读写权限</li>
+                    <li>📦 建议批量大小为100-500</li>
+                    <li>⏰ 缓存时间建议300-600秒</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="optimizer-controller-simple.js"></script>
+</body>
+</html>
